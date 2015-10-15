@@ -19,7 +19,7 @@ from radical.ensemblemd.kernel_plugins.kernel_base import KernelBase
 _KERNEL_INFO = {
     "name":         "md.mdrun",
     "description":  "Molecular dynamics with the gromacs software package. http://www.gromacs.org/",
-    "arguments":   {"-deffnm=":
+    "arguments":   {"--deffnm=":
                         {
                             "mandatory": True,
                             "description": "Input parameter filename"
@@ -85,7 +85,7 @@ class mdrun_Kernel(KernelBase):
 
         cfg = _KERNEL_INFO["machine_configs"][resource_key]
 
-        arguments = ['-deffnm','{0}'.format(self.get_arg("-deffnm="))]
+        arguments = ['-deffnm','{0}'.format(self.get_arg("--deffnm="))]
 
         self._executable  = cfg["executable"]
         self._arguments   = arguments

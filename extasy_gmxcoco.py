@@ -132,7 +132,7 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
 
             k4_eq_kernel = Kernel(name="md.mdrun")
             k4_eq_kernel.link_input_data = ['$PRE_LOOP/eq-{0}_{1}.tpr > eq-{0}_{1}.tpr'.format(iteration-1,instance-1)]
-            k4_eq_kernel.arguments = ["-deffnm=eq-%d_%d"%(iteration-1,instance-1)]
+            k4_eq_kernel.arguments = ["--deffnm=eq-%d_%d"%(iteration-1,instance-1)]
             k4_eq_kernel.copy_output_data = ['eq-{0}_{1}.gro > $PRE_LOOP/eq-{0}_{1}.gro'.format(iteration-1,instance-1)]
             kernel_list.append(k4_min_kernel)
 			
