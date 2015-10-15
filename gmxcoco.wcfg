@@ -1,0 +1,28 @@
+#--------------------------------------------------Applications-------------------------------------------------
+simulator                  = 'Gromacs4CoCo'                   # Simulator to be loaded
+analyzer                   = 'CoCo'                           # Analyzer to be loaded
+
+#--------------------------------------------------General------------------------------------------------------
+num_iterations             = 2                                # Number of iterations of Simulation-Analysis
+start_iter                 = 0                                # Iteration number with which to start
+num_CUs   	           = 16                               # Number of tasks or Compute Units
+nsave		           = 1	                              # Iterations after which output is transferred to local machine
+
+#--------------------------------------------------Simulation--------------------------------------------------
+num_cores_per_sim_cu      = 2                                 # Number of cores per Simulation Compute Units
+initial_crd_file          = './inp_files/helix.gro'           # Entire path to Coordinates file - Do not use $HOME or the likes
+md_input_file             = './inp_files/grompp-verlet.mdp'   # Entire path to MD Input file - Do not use $HOME or the likes
+top_file                  = './inp_files/topol.top'           # Entire path to Topology file - Do not use $HOME or the likes
+#ndx_file                  = './inp_files/index.ndx'          # Entire path to Index file - Do not use $HOME or the likes
+itp_file                  = './inp_files/posre.itp'           # Entire path to ITP file - Do not use $HOME or the likes
+restr_file                = './inp_files/helix.gro'           # Entire path to Restraint file - Do not use $HOME or the likes
+eminrestr_md              = './inp_files/grompp_after_coco-em1.mdp'
+eeqrestr_md               = './inp_files/grompp_after_coco-em2.mdp'
+
+#---------------------------------------------------Analysis-------------------------------------------------------------
+grid                      = '30'                              # Number of points along each dimension of the CoCo histogram
+dims                      = '3'                               # The number of projections to consider from the input pcz file
+sel                       = 'protein'                         # Select the part of the system to be considered for coco analysis
+output                    = 'coco_out.gro'                    # Specify base name for the output files where the extension will indicate the format of the output
+#---------------------------------------------------Folder with any custom scripts to be used on local machine --------------------------------------------------------------
+misc_loc = './misc_files'                                     # Location of miscellaneous files
