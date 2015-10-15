@@ -186,7 +186,8 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         k1_ana_kernel.link_input_data = ['$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.top_file))]
         for iter in range(1,iteration+1):
             for i in range(1,Kconfig.num_CUs+1):        
-                k1_ana_kernel.link_input_data = k3_ana_kernel.link_input_data + ['$SIMULATION_ITERATION_{0}_INSTANCE_{1}/md-{2}_{3}.xtc > md-{2}_{3}.xtc'.format(iter,i,iter-1,i-1)]
+                k1_ana_kernel.link_input_data = k1_ana_kernel.link_input_data + ['$SIMULATION_ITERATION_{0}_INSTANCE_{1}/md-{2}_{3}.xtc > md-{2}_{3}.xtc'.format(iter,i,iter-1,i-1)]
+        k1_ana_kernel.link_input_data = k1_ana_kernel.link_input_data + ['$SIMULATION_ITERATION_{0}_INSTANCE_1/md-{1}_0.gro > md-{1}_0.gro'.format(iteration,iteration-1)]
         
         k1_ana_kernel.cores = 1
         k1_ana_kernel.uses_mpi = False
@@ -198,7 +199,7 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         k1_ana_kernel.arguments = ["--grid={0}".format(Kconfig.grid),
                                    "--dims={0}".format(Kconfig.dims),
                                    "--frontpoints={0}".format(Kconfig.num_CUs),
-                                   "--topfile={0}".format(os.path.basename(Kconfig.top_file)),
+                                   "--topfile=md-{0}_0.gro".format(iteration-1),
                                    "--mdfile=*.xtc",
                                    "--output={0}{1}{2}".format(outbase,iteration-1,ext),
                                    "--atom_selection={0}".format(Kconfig.sel)]
