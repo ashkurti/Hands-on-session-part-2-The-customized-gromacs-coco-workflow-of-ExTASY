@@ -76,7 +76,7 @@ class mdrun_Kernel(KernelBase):
     def __init__(self):
         """Le constructor.
         """
-        super(Kernel, self).__init__(_KERNEL_INFO)
+        super(mdrun_Kernel, self).__init__(_KERNEL_INFO)
 
     # --------------------------------------------------------------------------
     #

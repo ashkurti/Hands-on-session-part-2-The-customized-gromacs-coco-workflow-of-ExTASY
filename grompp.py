@@ -78,7 +78,7 @@ class grompp_Kernel(KernelBase):
     def __init__(self):
         """Le constructor.
         """
-        super(Kernel, self).__init__(_KERNEL_INFO)
+        super(grompp_Kernel, self).__init__(_KERNEL_INFO)
 
     # --------------------------------------------------------------------------
     #
