@@ -55,7 +55,7 @@ _KERNEL_INFO = {
         },
         "xsede.stampede": {
             "environment"   : {"FOO": "bar"},
-            "pre_exec"      : ["module load intel/15.0.2","module load boost","module load cxx11","module load gromacs","module load python"],
+            "pre_exec"      : ["module load TACC","module load intel/15.0.2","module load boost","module load cxx11","module load gromacs","module load python"],
             "executable"    : "grompp",
             "uses_mpi"      : False
         },
