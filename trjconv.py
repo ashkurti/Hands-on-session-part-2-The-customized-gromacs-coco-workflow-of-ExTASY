@@ -17,29 +17,54 @@ from radical.ensemblemd.kernel_plugins.kernel_base import KernelBase
 # ------------------------------------------------------------------------------
 #
 _KERNEL_INFO = {
-    "name":         "md.grompp",
+    "name":         "md.trjconv",
     "description":  "Performs the preprocessing necessary for the following MD simulation. ",
-    "arguments":    {"--mdp=":
+    "arguments":    {"--echo1=":
                         {
                             "mandatory": True,
                             "description": "Input file with simulation parameters"
                         },
-                     "--gro=":   
+                     "--f1=":   
                         {
                             "mandatory": True,
                             "description": "A coordinates file - a .gro file in our case."
                         },
-                     "--ref=":   
+                     "--o1=":   
                         {
-                            "mandatory": False,
+                            "mandatory": True,
                             "description": "A coordinates file - a .gro file in our case."
                         },
-                     "--top=":   
+                     "--s1=":   
                         {
                             "mandatory": True,
                             "description": "A topology file "
                         },
-                     "--tpr=":   
+                     "--pbc1=":   
+                        {
+                            "mandatory": True,
+                            "description": "Output file as a portable binary run file - .tpr - containing the starting structure of the simulation, the molecular topology and all simulation parameters."
+                        },
+                        "--echo2=":
+                        {
+                            "mandatory": True,
+                            "description": "Input file with simulation parameters"
+                        },
+                     "--f2=":   
+                        {
+                            "mandatory": True,
+                            "description": "A coordinates file - a .gro file in our case."
+                        },
+                     "--o2=":   
+                        {
+                            "mandatory": True,
+                            "description": "A coordinates file - a .gro file in our case."
+                        },
+                     "--s2=":   
+                        {
+                            "mandatory": True,
+                            "description": "A topology file "
+                        },
+                     "--pbc2=":   
                         {
                             "mandatory": True,
                             "description": "Output file as a portable binary run file - .tpr - containing the starting structure of the simulation, the molecular topology and all simulation parameters."
@@ -56,13 +81,13 @@ _KERNEL_INFO = {
         "xsede.stampede": {
             "environment"   : {"FOO": "bar"},
             "pre_exec"      : ["module load intel/15.0.2","module load boost","module load cxx11","module load gromacs","module load python"],
-            "executable"    : "grompp",
+            "executable"    : "/bin/bash",
             "uses_mpi"      : False
         },
         "epsrc.archer": {
             "environment"   : {"FOO": "bar"},
             "pre_exec"      : ["module load packages-archer","module load gromacs/5.0.0","module load python-compute/2.7.6"],
-            "executable"    : "grompp",
+            "executable"    : "/bin/bash",
             "uses_mpi"      : False
         }                
     }
@@ -71,14 +96,14 @@ _KERNEL_INFO = {
 
 # ------------------------------------------------------------------------------
 #
-class grompp_Kernel(KernelBase):
+class trjconv_Kernel(KernelBase):
 
     # --------------------------------------------------------------------------
     #
     def __init__(self):
         """Le constructor.
         """
-        super(grompp_Kernel, self).__init__(_KERNEL_INFO)
+        super(trjconv_Kernel, self).__init__(_KERNEL_INFO)
 
     # --------------------------------------------------------------------------
     #
@@ -100,10 +125,16 @@ class grompp_Kernel(KernelBase):
 
         cfg = _KERNEL_INFO["machine_configs"][resource_key]
         
-        if self.get_arg("--ref=") is None:
-            arguments = ['-f','{0}'.format(self.get_arg("--mdp=")),'-c','{0}'.format(self.get_arg("--gro=")),'-p','{0}'.format(self.get_arg("--top=")),'-o','{0}'.format(self.get_arg("--tpr="))]
-        else:			   
-            arguments = ['-f','{0}'.format(self.get_arg("--mdp=")),'-r','{0}'.format(self.get_arg("--ref=")),'-c','{0}'.format(self.get_arg("--gro=")),'-p','{0}'.format(self.get_arg("--top=")),'-o','{0}'.format(self.get_arg("--tpr="))]
+        arguments = ['-l','-c','"echo {0} | trjconv -f {1} -o {3} -s {2} -pbc {4} && echo {5} | trjconv -f {6} -o {8} -s {7} -pbc {9}"'.format(self.get_arg("--echo1="),
+                                                                                                                                            self.get_arg("--f1="),
+                                                                                                                                            self.get_arg("--s1="),
+                                                                                                                                            self.get_arg("--o1="),
+                                                                                                                                            self.get_arg("--pbc1="),
+                                                                                                                                            self.get_arg("--echo2="),
+                                                                                                                                            self.get_arg("--f2="),
+                                                                                                                                            self.get_arg("--s2="),
+                                                                                                                                            self.get_arg("--o2="),
+                                                                                                                                            self.get_arg("--pbc2="))]
         
         self._executable  = cfg['executable']
         self._arguments   = arguments

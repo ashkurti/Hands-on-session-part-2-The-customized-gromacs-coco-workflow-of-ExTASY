@@ -20,8 +20,12 @@ import os
 
 from grompp import grompp_Kernel
 get_engine().add_kernel_plugin(grompp_Kernel)
+
 from mdrun import mdrun_Kernel
 get_engine().add_kernel_plugin(mdrun_Kernel)
+
+from trjconv import trjconv_Kernel
+get_engine().add_kernel_plugin(trjconv_Kernel)
 
 # ------------------------------------------------------------------------------
 #
@@ -149,14 +153,29 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         k6_sim_kernel = Kernel(name="md.mdrun")
         k6_sim_kernel.link_input_data = ['$PRE_LOOP/md-{0}_{1}.tpr > md-{0}_{1}.tpr'.format(iteration-1,instance-1)]
         k6_sim_kernel.arguments = ["--deffnm=md-%d_%d"%(iteration-1,instance-1)]
-        k6_sim_kernel.post_exec = ["echo System | trjconv -f md-{0}_{1}.gro -o md-{0}_{1}_whole.gro -s md-{0}_{1}.tpr -pbc whole".format(iteration-1,instance-1),
-                                   "echo System | trjconv -f md-{0}_{1}.xtc -o md-{0}_{1}_whole.xtc -s md-{0}_{1}.tpr -pbc whole".format(iteration-1,instance-1)]
-        k6_sim_kernel.copy_output_data = ["md-%d_%d.xtc > $PRE_LOOP/md-%d_%d.xtc"%(iteration-1,instance-1)]
+        k6_sim_kernel.copy_output_data = ["md-{0}_{1}.gro > $PRE_LOOP/md-{0}_{1}.gro".format(iteration-1,instance-1)]
+        kernel_list.append(k6_sim_kernel)
+
+        k7_sim_kernel = Kernel(name="md.trjconv")
+        k7_sim_kernel.link_input_data = ["$PRE_LOOP/md-{0}_{1}.gro > md-{0}_{1}.gro".format(iteration-1,instance-1)]
+        k7_sim_kernel.arguments = [    "--echo1=System",
+                                                             "--f1=md-{0}_{1}.gro".format(iteration-1,instance-1),
+                                                             "--s1=md-{0}_{1}.tpr".format(iteration-1,instance-1),
+                                                             "--o1=md-{0}_{1}_whole.gro".format(iteration-1,instance-1),
+                                                             "--pbc1=whole",
+                                                             "--echo2=System",
+                                                             "--f2=md-{0}_{1}.xtc".format(iteration-1,instance-1),
+                                                             "--s2=md-{0}_{1}.tpr".format(iteration-1,instance-1),
+                                                             "--o2=md-{0}_{1}_whole.xtc".format(iteration-1,instance-1),
+                                                             "--pbc2=whole"
+
+                            ]
+        k7_sim_kernel.copy_output_data = ["md-{0}_{1}.xtc > $PRE_LOOP/md-{0}_{1}.xtc".format(iteration-1,instance-1)]
         
         if(iteration%Kconfig.nsave==0):
-            k6_sim_kernel.download_output_data = ["md-{0}_{1}.xtc > output/iter{0}/md-{0}_{1}.xtc".format(iteration-1,instance-1)]	
+            k7_sim_kernel.download_output_data = ["md-{0}_{1}.xtc > output/iter{0}/md-{0}_{1}.xtc".format(iteration-1,instance-1)]	
         
-        kernel_list.append(k6_sim_kernel)              
+        kernel_list.append(k7_sim_kernel)              
         
         return kernel_list
         
