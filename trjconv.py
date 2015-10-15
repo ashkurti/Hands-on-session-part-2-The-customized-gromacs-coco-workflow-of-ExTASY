@@ -125,7 +125,7 @@ class trjconv_Kernel(KernelBase):
 
         cfg = _KERNEL_INFO["machine_configs"][resource_key]
         
-        arguments = ['-l','-c','"echo {0} | trjconv -f {1} -o {3} -s {2} -pbc {4} && echo {5} | trjconv -f {6} -o {8} -s {7} -pbc {9}"'.format(self.get_arg("--echo1="),
+        arguments = ['-l','-c','echo {0} | trjconv -f {1} -o {3} -s {2} -pbc {4} && echo {5} | trjconv -f {6} -o {8} -s {7} -pbc {9}'.format(self.get_arg("--echo1="),
                                                                                                                                             self.get_arg("--f1="),
                                                                                                                                             self.get_arg("--s1="),
                                                                                                                                             self.get_arg("--o1="),
