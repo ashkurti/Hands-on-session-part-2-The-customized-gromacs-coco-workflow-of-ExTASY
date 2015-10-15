@@ -94,13 +94,17 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         
         if((iteration-1)!=0):
 
+            outbase, ext = os.path(Kconfig.output)
+            if ext == '':
+		    	ext = '.pdb'
+            
             k1_prep_min_kernel = Kernel(name="md.grompp")
             k1_prep_min_kernel.link_input_data = ['$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.eminrestr_md)),
                                                   '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.top_file)),
                                                   '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.restr_file))]			
-            k1_prep_min_kernel.link_input_data = k1_prep_min_kernel.link_input_data + ['$PREV_ANALYSIS_INSTANCE_{2}/coco_out{0}_{1}.gro > coco_out{0}_{1}.gro'.format(iteration-2,instance-1,instance)]
+            k1_prep_min_kernel.link_input_data = k1_prep_min_kernel.link_input_data + ['$PREV_ANALYSIS_INSTANCE_{0}/{1}{2}{3}{4} > {1}{2}{3}{4}'.format(instance,outbase,iteration-2,instance-1,ext)]
             k1_prep_min_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.eminrestr_md)),
-                                            "--gro=coco_out{0}_{1}.gro".format(iteration-2,instance-1),
+                                            "--gro={1}{2}{3}{4}".format(outbase,iteration-2,instance-1,ext),
                                             "--top={0}".format(os.path.basename(Kconfig.top_file)),
                                             "--ref={0}".format(os.path.basename(Kconfig.restr_file)),
                                             "--tpr=min-%d_%d.tpr"%(iteration-1,instance-1)]
@@ -153,28 +157,26 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         k6_sim_kernel = Kernel(name="md.mdrun")
         k6_sim_kernel.link_input_data = ['$PRE_LOOP/md-{0}_{1}.tpr > md-{0}_{1}.tpr'.format(iteration-1,instance-1)]
         k6_sim_kernel.arguments = ["--deffnm=md-%d_%d"%(iteration-1,instance-1)]
-        k6_sim_kernel.copy_output_data = ["md-{0}_{1}.gro > $PRE_LOOP/md-{0}_{1}.gro".format(iteration-1,instance-1)]
+        k6_sim_kernel.copy_output_data = ["md-{0}_{1}.gro > $PRE_LOOP/md-{0}_{1}.gro".format(iteration-1,instance-1),
+                                          "md-{0}_{1}.xtc > $PRE_LOOP/md-{0}_{1}.xtc".format(iteration-1,instance-1)]
         kernel_list.append(k6_sim_kernel)
 
         k7_sim_kernel = Kernel(name="md.trjconv")
-        k7_sim_kernel.link_input_data = ["$PRE_LOOP/md-{0}_{1}.gro > md-{0}_{1}.gro".format(iteration-1,instance-1)]
-        k7_sim_kernel.arguments = [    "--echo1=System",
-                                                             "--f1=md-{0}_{1}.gro".format(iteration-1,instance-1),
-                                                             "--s1=md-{0}_{1}.tpr".format(iteration-1,instance-1),
-                                                             "--o1=md-{0}_{1}_whole.gro".format(iteration-1,instance-1),
-                                                             "--pbc1=whole",
-                                                             "--echo2=System",
-                                                             "--f2=md-{0}_{1}.xtc".format(iteration-1,instance-1),
-                                                             "--s2=md-{0}_{1}.tpr".format(iteration-1,instance-1),
-                                                             "--o2=md-{0}_{1}_whole.xtc".format(iteration-1,instance-1),
-                                                             "--pbc2=whole"
-
-                            ]
-        k7_sim_kernel.copy_output_data = ["md-{0}_{1}.xtc > $PRE_LOOP/md-{0}_{1}.xtc".format(iteration-1,instance-1)]
-        
+        k7_sim_kernel.link_input_data = ["$PRE_LOOP/md-{0}_{1}.gro > md-{0}_{1}.gro".format(iteration-1,instance-1),
+                                         "$PRE_LOOP/md-{0}_{1}.xtc > md-{0}_{1}.xtc".format(iteration-1,instance-1),
+                                         "$PRE_LOOP/md-{0}_{1}.tpr > md-{0}_{1}.tpr".format(iteration-1,instance-1)]
+        k7_sim_kernel.arguments = ["--echo1=System",
+                                   "--f1=md-{0}_{1}.gro".format(iteration-1,instance-1),
+                                   "--s1=md-{0}_{1}.tpr".format(iteration-1,instance-1),
+                                   "--o1=md-{0}_{1}_whole.gro".format(iteration-1,instance-1),
+                                   "--pbc1=whole",
+                                   "--echo2=System",
+                                   "--f2=md-{0}_{1}.xtc".format(iteration-1,instance-1),
+                                   "--s2=md-{0}_{1}.tpr".format(iteration-1,instance-1),
+                                   "--o2=md-{0}_{1}_whole.xtc".format(iteration-1,instance-1),
+                                   "--pbc2=whole"]
         if(iteration%Kconfig.nsave==0):
-            k7_sim_kernel.download_output_data = ["md-{0}_{1}.xtc > output/iter{0}/md-{0}_{1}.xtc".format(iteration-1,instance-1)]	
-        
+            k7_sim_kernel.download_output_data = ["md-{0}_{1}_whole.xtc > output/iter{0}/md-{0}_{1}_whole.xtc".format(iteration-1,instance-1)]	        
         kernel_list.append(k7_sim_kernel)              
         
         return kernel_list
