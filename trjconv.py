@@ -136,7 +136,7 @@ class trjconv_Kernel(KernelBase):
                                                                                                                                             self.get_arg("--o2="),
                                                                                                                                             self.get_arg("--pbc2="))]
         
-        self._executable  = executable
+        self._executable  = cfg['executable']
         self._arguments   = arguments
         self._environment = cfg["environment"]
         self._uses_mpi    = cfg["uses_mpi"]

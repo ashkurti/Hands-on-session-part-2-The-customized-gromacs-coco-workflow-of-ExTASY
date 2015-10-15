@@ -170,7 +170,7 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                                              "--pbc2=whole"
 
                             ]
-        k7_sim_kernel.copy_output_data = ["md-%d_%d.xtc > $PRE_LOOP/md-%d_%d.xtc"%(iteration-1,instance-1)]
+        k7_sim_kernel.copy_output_data = ["md-{0}_{1}.xtc > $PRE_LOOP/md-{0}_{1}.xtc".format(iteration-1,instance-1)]
         
         if(iteration%Kconfig.nsave==0):
             k7_sim_kernel.download_output_data = ["md-{0}_{1}.xtc > output/iter{0}/md-{0}_{1}.xtc".format(iteration-1,instance-1)]	

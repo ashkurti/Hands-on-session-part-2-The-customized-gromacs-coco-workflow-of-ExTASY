@@ -105,7 +105,7 @@ class grompp_Kernel(KernelBase):
         else:			   
             arguments = ['-f','{0}'.format(self.get_arg("--mdp=")),'-r','{0}'.format(self.get_arg("--ref=")),'-c','{0}'.format(self.get_arg("--gro=")),'-p','{0}'.format(self.get_arg("--top=")),'-o','{0}'.format(self.get_arg("--tpr="))]
         
-        self._executable  = executable
+        self._executable  = cfg['executable']
         self._arguments   = arguments
         self._environment = cfg["environment"]
         self._uses_mpi    = cfg["uses_mpi"]
