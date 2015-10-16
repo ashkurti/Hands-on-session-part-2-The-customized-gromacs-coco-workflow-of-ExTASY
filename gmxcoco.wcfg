@@ -20,3 +20,5 @@ grid                      = '30'                              # Number of points
 dims                      = '3'                               # The number of projections to consider from the input pcz file
 sel                       = 'protein'                         # Select the part of the system to be considered for coco analysis
 output                    = 'coco_out.gro'                    # Specify base name for the output files where the extension will indicate the format of the output
+
+misc_loc = './misc_files'
