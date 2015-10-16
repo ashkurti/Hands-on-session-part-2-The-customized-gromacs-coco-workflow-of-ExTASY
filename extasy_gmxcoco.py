@@ -27,9 +27,6 @@ get_engine().add_kernel_plugin(mdrun_Kernel)
 from trjconv import trjconv_Kernel
 get_engine().add_kernel_plugin(trjconv_Kernel)
 
-from tleap import tleap_Kernel
-get_engine().add_kernel_plugin(tleap_Kernel)
-
 # ------------------------------------------------------------------------------
 #
 
@@ -232,30 +229,17 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                    "--frontpoints={0}".format(Kconfig.num_CUs),
                                    "--topfile=md-{0}_0.gro".format(iteration-1),
                                    "--mdfile=*.xtc",
-                                   "--output={0}_{1}".format(outbase,iteration-1,ext),
+                                   "--output={0}_{1}.{2}".format(outbase,iteration-1,ext),
                                    "--atom_selection={0}".format(Kconfig.sel)]
 
         k1_ana_kernel.copy_output_data = []
         for i in range(0,Kconfig.num_CUs):
-            k1_ana_kernel.copy_output_data += ["{0}_{1}{2}.pdb > $PRE_LOOP/{0}_{1}{2}.pdb".format(outbase,iteration-1,i,ext)]
+            k1_ana_kernel.copy_output_data += ["{0}_{1}{2}.gro > $PRE_LOOP/{0}_{1}{2}.gro".format(outbase,iteration-1,i,ext)]
 
         k1_ana_kernel.download_output_data = ["coco.log > output/coco-iter{0}.log".format(iteration-1)]	
         
 
-
-
-        #tleap kernel
-        k2_ana_kernel = Kernel(name="tleap")
-        k2_ana_kernel.copy_input_data = ['$PRE_LOOP/postprocessing.py']
-        for i in range(0,Kconfig.num_CUs):
-            k2_ana_kernel.copy_input_data += ["$PRE_LOOP/{0}_{1}{2}.pdb > {0}_{1}{2}.pdb".format(outbase,iteration-1,i,ext)]
-        k2_ana_kernel.arguments=[    
-                                                        "--basename={0}_".format(outbase),
-                                                        "--numofsims={0}".format(Kconfig.num_CUs),
-                                                        "--cycle={0}".format(iteration-1)]
-
-
-        return [k1_ana_kernel,k2_ana_kernel]
+        return [k1_ana_kernel]
         
     def post_loop(self):
         pass
