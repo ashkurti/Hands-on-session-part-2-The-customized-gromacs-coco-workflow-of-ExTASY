@@ -27,6 +27,9 @@ get_engine().add_kernel_plugin(mdrun_Kernel)
 from trjconv import trjconv_Kernel
 get_engine().add_kernel_plugin(trjconv_Kernel)
 
+from tleap import tleap_Kernel
+get_engine().add_kernel_plugin(tleap_Kernel)
+
 # ------------------------------------------------------------------------------
 #
 
@@ -55,7 +58,8 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                Kconfig.itp_file,                    
                                Kconfig.restr_file,                  
                                Kconfig.eminrestr_md,                
-                               Kconfig.eeqrestr_md]                 
+                               Kconfig.eeqrestr_md,
+                               '{0}/postprocessing.py'.format(Kconfig.misc_loc)]                 
         outbase, ext = os.path.basename(Kconfig.output).split('.')
 
         print outbase, ext
@@ -207,18 +211,21 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
 
         k1_ana_kernel = Kernel(name="md.coco")
 
-        k1_ana_kernel.link_input_data = ['$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.top_file))]
+        k1_ana_kernel.link_input_data = ['$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.top_file)),
+                                                                '$SIMULATION_ITERATION_{0}_INSTANCE_1/md-{1}_0.gro > md-{1}_0.gro'.format(iteration,iteration-1)]
         for iter in range(1,iteration+1):
             for i in range(1,Kconfig.num_CUs+1):        
                 k1_ana_kernel.link_input_data = k1_ana_kernel.link_input_data + ['$SIMULATION_ITERATION_{0}_INSTANCE_{1}/md-{2}_{3}.xtc > md-{2}_{3}.xtc'.format(iter,i,iter-1,i-1)]
-        k1_ana_kernel.link_input_data = k1_ana_kernel.link_input_data + ['$SIMULATION_ITERATION_{0}_INSTANCE_1/md-{1}_0.gro > md-{1}_0.gro'.format(iteration,iteration-1)]
+
         
         k1_ana_kernel.cores = 1
         k1_ana_kernel.uses_mpi = False
         
         outbase, ext = os.path.basename(Kconfig.output).split('.')
-        if ext == '':
-			ext = '.pdb'
+
+        #Not sure why this if condition is required
+        #if ext == '':
+	#		ext = '.pdb'
                 
         k1_ana_kernel.arguments = ["--grid={0}".format(Kconfig.grid),
                                    "--dims={0}".format(Kconfig.dims),
@@ -230,11 +237,25 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
 
         k1_ana_kernel.copy_output_data = []
         for i in range(0,Kconfig.num_CUs):
-            k1_ana_kernel.copy_output_data = k1_ana_kernel.copy_output_data + ["{0}_{1}{2}.pdb > $PRE_LOOP/{0}_{1}{2}.pdb".format(outbase,iteration-1,i,ext)]
+            k1_ana_kernel.copy_output_data += ["{0}_{1}{2}.pdb > $PRE_LOOP/{0}_{1}{2}.pdb".format(outbase,iteration-1,i,ext)]
 
         k1_ana_kernel.download_output_data = ["coco.log > output/coco-iter{0}.log".format(iteration-1)]	
         
-        return k1_ana_kernel
+
+
+
+        #tleap kernel
+        k2_ana_kernel = Kernel(name="tleap")
+        k2_ana_kernel.copy_input_data = ['$PRE_LOOP/postprocessing.py']
+        for i in range(0,Kconfig.num_CUs):
+            k2_ana_kernel.copy_input_data += ["$PRE_LOOP/{0}_{1}{2}.pdb > {0}_{1}{2}.pdb".format(outbase,iteration-1,i,ext)]
+        k2_ana_kernel.arguments=[    
+                                                        "--basename={0}_".format(outbase),
+                                                        "--numofsims={0}".format(Kconfig.num_CUs),
+                                                        "--cycle={0}".format(iteration-1)]
+
+
+        return [k1_ana_kernel,k2_ana_kernel]
         
     def post_loop(self):
         pass
