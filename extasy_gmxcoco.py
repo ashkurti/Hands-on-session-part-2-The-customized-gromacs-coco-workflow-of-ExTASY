@@ -106,9 +106,9 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
             k1_prep_min_kernel.link_input_data = ['$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.eminrestr_md)),
                                                   '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.top_file)),
                                                   '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.restr_file))]			
-            k1_prep_min_kernel.link_input_data = k1_prep_min_kernel.link_input_data + ['$PREV_ANALYSIS_INSTANCE_1/{1}{2}{3}{4} > {1}{2}{3}{4}'.format(instance,outbase,iteration-2,instance-1,ext)]
+            k1_prep_min_kernel.link_input_data = k1_prep_min_kernel.link_input_data + ['$PREV_ANALYSIS_INSTANCE_1/{0}_{1}{2}.{3} > {0}_{1}{2}.{3}'.format(outbase,iteration-2,instance-1,ext)]
             k1_prep_min_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.eminrestr_md)),
-                                            "--gro={0}{1}{2}{3}".format(outbase,iteration-2,instance-1,ext),
+                                            "--gro={0}_{1}{2}.{3}".format(outbase,iteration-2,instance-1,ext),
                                             "--top={0}".format(os.path.basename(Kconfig.top_file)),
                                             "--ref={0}".format(os.path.basename(Kconfig.restr_file)),
                                             "--tpr=min-{0}_{1}.tpr".format(iteration-1,instance-1)]
