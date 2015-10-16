@@ -56,7 +56,10 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                Kconfig.restr_file,                  
                                Kconfig.eminrestr_md,                
                                Kconfig.eeqrestr_md]                 
-                               
+        outbase, ext = os.path.basename(Kconfig.output).split('.')
+
+        print outbase, ext
+
         return k
 
 
@@ -94,7 +97,7 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         
         if((iteration-1)!=0):
 
-            outbase, ext = os.path(Kconfig.output)
+            outbase, ext = os.path.basename(Kconfig.output).split('.')
             if ext == '':
 		    	ext = '.pdb'
             
@@ -102,18 +105,18 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
             k1_prep_min_kernel.link_input_data = ['$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.eminrestr_md)),
                                                   '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.top_file)),
                                                   '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.restr_file))]			
-            k1_prep_min_kernel.link_input_data = k1_prep_min_kernel.link_input_data + ['$PREV_ANALYSIS_INSTANCE_{0}/{1}{2}{3}{4} > {1}{2}{3}{4}'.format(instance,outbase,iteration-2,instance-1,ext)]
+            k1_prep_min_kernel.link_input_data = k1_prep_min_kernel.link_input_data + ['$PREV_ANALYSIS_INSTANCE_1/{1}{2}{3}{4} > {1}{2}{3}{4}'.format(instance,outbase,iteration-2,instance-1,ext)]
             k1_prep_min_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.eminrestr_md)),
-                                            "--gro={1}{2}{3}{4}".format(outbase,iteration-2,instance-1,ext),
+                                            "--gro={0}{1}{2}{3}".format(outbase,iteration-2,instance-1,ext),
                                             "--top={0}".format(os.path.basename(Kconfig.top_file)),
                                             "--ref={0}".format(os.path.basename(Kconfig.restr_file)),
-                                            "--tpr=min-%d_%d.tpr"%(iteration-1,instance-1)]
+                                            "--tpr=min-{0}_{1}.tpr".format(iteration-1,instance-1)]
             k1_prep_min_kernel.copy_output_data = ['min-{0}_{1}.tpr > $PRE_LOOP/min-{0}_{1}.tpr'.format(iteration-1,instance-1)]    
             kernel_list.append(k1_prep_min_kernel)
             
             k2_min_kernel = Kernel(name="md.mdrun")
             k2_min_kernel.link_input_data = ['$PRE_LOOP/min-{0}_{1}.tpr > min-{0}_{1}.tpr'.format(iteration-1,instance-1)]
-            k2_min_kernel.arguments = ["-deffnm=min-%d_%d"%(iteration-1,instance-1)]
+            k2_min_kernel.arguments = ["--deffnm=min-{0}_{1}".format(iteration-1,instance-1)]
             k2_min_kernel.copy_output_data = ['min-{0}_{1}.gro > $PRE_LOOP/min-{0}_{1}.gro'.format(iteration-1,instance-1)]
             kernel_list.append(k2_min_kernel)
             
@@ -123,18 +126,18 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                                  '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.restr_file))]
             k3_prep_eq_kernel.link_input_data = k3_prep_eq_kernel.link_input_data + ['$PRE_LOOP/min-{0}_{1}.gro > min-{0}_{1}.gro'.format(iteration-1,instance-1)]
             k3_prep_eq_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.eeqrestr_md)),
-                                           "--gro=min-%d_%d.gro"%(iteration-1,instance-1),
+                                           "--gro=min-{0}_{1}.gro".format(iteration-1,instance-1),
                                            "--top={0}".format(os.path.basename(Kconfig.top_file)),
                                            "--ref={0}".format(os.path.basename(Kconfig.restr_file)),
-                                           "--tpr=eq-%d_%d.tpr"%(iteration-1,instance-1)]
+                                           "--tpr=eq-{0}_{1}.tpr".format(iteration-1,instance-1)]
             k3_prep_eq_kernel.copy_output_data = ['eq-{0}_{1}.tpr > $PRE_LOOP/eq-{0}_{1}.tpr'.format(iteration-1,instance-1)]
             kernel_list.append(k3_prep_eq_kernel)
 
             k4_eq_kernel = Kernel(name="md.mdrun")
             k4_eq_kernel.link_input_data = ['$PRE_LOOP/eq-{0}_{1}.tpr > eq-{0}_{1}.tpr'.format(iteration-1,instance-1)]
-            k4_eq_kernel.arguments = ["--deffnm=eq-%d_%d"%(iteration-1,instance-1)]
+            k4_eq_kernel.arguments = ["--deffnm=eq-{0}_{1}".format(iteration-1,instance-1)]
             k4_eq_kernel.copy_output_data = ['eq-{0}_{1}.gro > $PRE_LOOP/eq-{0}_{1}.gro'.format(iteration-1,instance-1)]
-            kernel_list.append(k4_min_kernel)
+            kernel_list.append(k4_eq_kernel)
 			
         k5_prep_sim_kernel = Kernel(name="md.grompp")
         k5_prep_sim_kernel.link_input_data = ['$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.md_input_file)),
@@ -144,19 +147,19 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
             k5_prep_sim_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.md_input_file)),
                                            "--gro={0}".format(os.path.basename(Kconfig.initial_crd_file)),
                                            "--top={0}".format(os.path.basename(Kconfig.top_file)),
-                                           "--tpr=md-%d_%d.tpr"%(iteration-1,instance-1)]  
+                                           "--tpr=md-{0}_{1}.tpr".format(iteration-1,instance-1)]  
         else:
             k5_prep_sim_kernel.link_input_data =  k5_prep_sim_kernel.link_input_data + ['$PRE_LOOP/eq-{0}_{1}.gro > eq-{0}_{1}.gro'.format(iteration-1,instance-1)]
             k5_prep_sim_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.md_input_file)),
-                                           "--gro=eq-%d_%d.gro"%(iteration-1,instance-1),
+                                           "--gro=eq-{0}_{1}.gro".format(iteration-1,instance-1),
                                            "--top={0}".format(os.path.basename(Kconfig.top_file)),
-                                           "--tpr=md-%d_%d.tpr"%(iteration-1,instance-1)]             
+                                           "--tpr=md-{0}_{1}.tpr".format(iteration-1,instance-1)]             
         k5_prep_sim_kernel.copy_output_data = ['md-{0}_{1}.tpr > $PRE_LOOP/md-{0}_{1}.tpr'.format(iteration-1,instance-1)]        
         kernel_list.append(k5_prep_sim_kernel)
         
         k6_sim_kernel = Kernel(name="md.mdrun")
         k6_sim_kernel.link_input_data = ['$PRE_LOOP/md-{0}_{1}.tpr > md-{0}_{1}.tpr'.format(iteration-1,instance-1)]
-        k6_sim_kernel.arguments = ["-deffnm=md-%d_%d"%(iteration-1,instance-1)]
+        k6_sim_kernel.arguments = ["--deffnm=md-{0}_{1}".format(iteration-1,instance-1)]
         k6_sim_kernel.copy_output_data = ["md-{0}_{1}.gro > $PRE_LOOP/md-{0}_{1}.gro".format(iteration-1,instance-1),
                                           "md-{0}_{1}.xtc > $PRE_LOOP/md-{0}_{1}.xtc".format(iteration-1,instance-1)]
         kernel_list.append(k6_sim_kernel)
@@ -213,7 +216,7 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         k1_ana_kernel.cores = 1
         k1_ana_kernel.uses_mpi = False
         
-        outbase, ext = os.path(Kconfig.output)
+        outbase, ext = os.path.basename(Kconfig.output).split('.')
         if ext == '':
 			ext = '.pdb'
                 
@@ -222,12 +225,12 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                    "--frontpoints={0}".format(Kconfig.num_CUs),
                                    "--topfile=md-{0}_0.gro".format(iteration-1),
                                    "--mdfile=*.xtc",
-                                   "--output={0}{1}{2}".format(outbase,iteration-1,ext),
+                                   "--output={0}_{1}".format(outbase,iteration-1,ext),
                                    "--atom_selection={0}".format(Kconfig.sel)]
 
         k1_ana_kernel.copy_output_data = []
         for i in range(0,Kconfig.num_CUs):
-            k1_ana_kernel.copy_output_data = k1_ana_kernel.copy_output_data + ["{0}{1}{2}{3} > $PRE_LOOP/{0}{1}{2}{3}".format(outbase,iteration-1,i,ext)]
+            k1_ana_kernel.copy_output_data = k1_ana_kernel.copy_output_data + ["{0}_{1}{2}.pdb > $PRE_LOOP/{0}_{1}{2}.pdb".format(outbase,iteration-1,i,ext)]
 
         k1_ana_kernel.download_output_data = ["coco.log > output/coco-iter{0}.log".format(iteration-1)]	
         
