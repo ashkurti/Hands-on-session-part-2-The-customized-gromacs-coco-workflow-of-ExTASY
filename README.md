@@ -60,9 +60,7 @@ if in a C shell:
 
 ```
 #!python
-setenv EXTASY_DEBUG True
-setenv RADICAL_PILOT_VERBOSE 'debug'
-setenv SAGA_VERBOSE 'debug'
+
 setenv RADICAL_ENMD_VERBOSE REPORT
 
 ```
@@ -70,9 +68,6 @@ or if in a bash shell:
 ```
 #!python
 
-export EXTASY_DEBUG=True
-export RADICAL_PILOT_VERBOSE='debug'
-export SAGA_VERBOSE='debug'
 export RADICAL_ENMD_VERBOSE=REPORT
 
 ```
