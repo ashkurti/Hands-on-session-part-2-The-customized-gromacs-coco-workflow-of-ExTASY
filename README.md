@@ -84,6 +84,25 @@ python extasy_gmxcoco.py --RPconfig stampede.rcfg --Kconfig gmxcoco.wcfg | & tee
 
 ```
 
+If everything is successful, with the current configuration the user should notice the generation of an output folder in his/her current directory with the following contents:
+```
+#!python
+
+ls -l output/*
+-rw------- 1 uname pa  491 Oct 20 12:05 output/coco-iter0.log
+-rw------- 1 uname pa  538 Oct 20 12:16 output/coco-iter1.log
+
+output/iter0:
+total 3424
+-rw------- 1 uname pa 1752276 Oct 20 12:05 md-0_0_whole.xtc
+-rw------- 1 uname pa 1751064 Oct 20 12:05 md-0_1_whole.xtc
+
+output/iter1:
+total 3424
+-rw------- 1 uname pa 1751604 Oct 20 12:15 md-1_0_whole.xtc
+-rw------- 1 uname pa 1751592 Oct 20 12:15 md-1_1_whole.xtc
+```
+
 ### Who do I talk to? ###
 
 * ardita.shkurti@nottingham.ac.uk (for the development of the standalone simulation workflow, development of the kernels to implement this workflow in an extasy context, input/output results expected at each step)
