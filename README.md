@@ -33,9 +33,9 @@ To run this workflow in their own systems the user should do the following:
 ```
 #!python
 
-wget https://bitbucket.org/extasy-project/extasy_gmxcoco/get/ext_gmxcoco-0.4.tar.gz
-tar -xvf ext_gmxcoco-0.4.tar.gz
-cd extasy-project-extasy_gmxcoco-6b98fe5548cb
+wget https://bitbucket.org/extasy-project/extasy_gmxcoco/get/ext_gmxcoco-0.5.tar.gz
+mkdir -p extasy_gmxcoco ; tar -xvf ext_gmxcoco-0.5.tar.gz -C extasy_gmxcoco
+cd extasy_gmxcoco
 virtualenv $HOME/ExTASY_0.2
 source $HOME/ExTASY_0.2/bin/activate.cs
 ```
@@ -43,13 +43,13 @@ If in a C shell:
 ```
 #!python
 
-setenv ENMD_INSTALL_VERSION "devel"
+setenv ENMD_INSTALL_VERSION "master"
 ```
 or if in a bash shell:
 ```
 #!python
 
-export ENMD_INSTALL_VERSION="devel"
+export ENMD_INSTALL_VERSION="master"
 ```
 Afterwards continue with:
 ```
