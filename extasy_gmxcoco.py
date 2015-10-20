@@ -59,8 +59,6 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                '{0}/postprocessing.py'.format(Kconfig.misc_loc)]                 
         outbase, ext = os.path.basename(Kconfig.output).split('.')
 
-        print outbase, ext
-
         return k
 
 
@@ -109,15 +107,16 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                                   '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.itp_file))]			
             k1_prep_min_kernel.link_input_data = k1_prep_min_kernel.link_input_data + ['$PREV_ANALYSIS_INSTANCE_1/{0}_{1}{2}.{3} > {0}_{1}{2}.{3}'.format(outbase,iteration-2,instance-1,ext)]
             k1_prep_min_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.eminrestr_md)),
-                                            "--gro={0}_{1}{2}.{3}".format(outbase,iteration-2,instance-1,ext),
+                                            "--ref={0}_{1}{2}.{3}".format(outbase,iteration-2,instance-1,ext),
                                             "--top={0}".format(os.path.basename(Kconfig.top_file)),
-                                            "--ref={0}".format(os.path.basename(Kconfig.restr_file)),
+                                            "--gro={0}".format(os.path.basename(Kconfig.restr_file)),
                                             "--tpr=min-{0}_{1}.tpr".format(iteration-1,instance-1)]
             k1_prep_min_kernel.copy_output_data = ['min-{0}_{1}.tpr > $PRE_LOOP/min-{0}_{1}.tpr'.format(iteration-1,instance-1)]    
             kernel_list.append(k1_prep_min_kernel)
             
             k2_min_kernel = Kernel(name="md.mdrun")
             k2_min_kernel.link_input_data = ['$PRE_LOOP/min-{0}_{1}.tpr > min-{0}_{1}.tpr'.format(iteration-1,instance-1)]
+            k2_min_kernel.cores = Kconfig.num_cores_per_sim_cu
             k2_min_kernel.arguments = ["--deffnm=min-{0}_{1}".format(iteration-1,instance-1)]
             k2_min_kernel.copy_output_data = ['min-{0}_{1}.gro > $PRE_LOOP/min-{0}_{1}.gro'.format(iteration-1,instance-1)]
             kernel_list.append(k2_min_kernel)
@@ -129,15 +128,16 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
                                                  '$PRE_LOOP/{0}'.format(os.path.basename(Kconfig.itp_file))]
             k3_prep_eq_kernel.link_input_data = k3_prep_eq_kernel.link_input_data + ['$PRE_LOOP/min-{0}_{1}.gro > min-{0}_{1}.gro'.format(iteration-1,instance-1)]
             k3_prep_eq_kernel.arguments = ["--mdp={0}".format(os.path.basename(Kconfig.eeqrestr_md)),
-                                           "--gro=min-{0}_{1}.gro".format(iteration-1,instance-1),
+                                           "--ref=min-{0}_{1}.gro".format(iteration-1,instance-1),
                                            "--top={0}".format(os.path.basename(Kconfig.top_file)),
-                                           "--ref={0}".format(os.path.basename(Kconfig.restr_file)),
+                                           "--gro={0}".format(os.path.basename(Kconfig.restr_file)),
                                            "--tpr=eq-{0}_{1}.tpr".format(iteration-1,instance-1)]
             k3_prep_eq_kernel.copy_output_data = ['eq-{0}_{1}.tpr > $PRE_LOOP/eq-{0}_{1}.tpr'.format(iteration-1,instance-1)]
             kernel_list.append(k3_prep_eq_kernel)
 
             k4_eq_kernel = Kernel(name="md.mdrun")
             k4_eq_kernel.link_input_data = ['$PRE_LOOP/eq-{0}_{1}.tpr > eq-{0}_{1}.tpr'.format(iteration-1,instance-1)]
+            k4_eq_kernel.cores = Kconfig.num_cores_per_sim_cu
             k4_eq_kernel.arguments = ["--deffnm=eq-{0}_{1}".format(iteration-1,instance-1)]
             k4_eq_kernel.copy_output_data = ['eq-{0}_{1}.gro > $PRE_LOOP/eq-{0}_{1}.gro'.format(iteration-1,instance-1)]
             kernel_list.append(k4_eq_kernel)
@@ -162,6 +162,7 @@ class Extasy_CocoGromacs_Static(SimulationAnalysisLoop):
         
         k6_sim_kernel = Kernel(name="md.mdrun")
         k6_sim_kernel.link_input_data = ['$PRE_LOOP/md-{0}_{1}.tpr > md-{0}_{1}.tpr'.format(iteration-1,instance-1)]
+        k6_sim_kernel.cores = Kconfig.num_cores_per_sim_cu
         k6_sim_kernel.arguments = ["--deffnm=md-{0}_{1}".format(iteration-1,instance-1)]
         k6_sim_kernel.copy_output_data = ["md-{0}_{1}.gro > $PRE_LOOP/md-{0}_{1}.gro".format(iteration-1,instance-1),
                                           "md-{0}_{1}.xtc > $PRE_LOOP/md-{0}_{1}.xtc".format(iteration-1,instance-1)]

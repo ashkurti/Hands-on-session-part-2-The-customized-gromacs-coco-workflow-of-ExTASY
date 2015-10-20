@@ -5,13 +5,13 @@ num_CUs   	           = 2                               # Number of tasks or Com
 nsave		           = 1	                              # Iterations after which output is transferred to local machine
 
 #--------------------------------------------------Simulation--------------------------------------------------
-num_cores_per_sim_cu      = 2                                 # Number of cores per Simulation Compute Units
+num_cores_per_sim_cu      = 1                                 # Number of cores per Simulation Compute Units
 initial_crd_file          = './inp_files/helix.gro'           # Entire path to Coordinates file - Do not use $HOME or the likes
 md_input_file             = './inp_files/grompp-verlet.mdp'   # Entire path to MD Input file - Do not use $HOME or the likes
 top_file                  = './inp_files/topol.top'           # Entire path to Topology file - Do not use $HOME or the likes
 #ndx_file                  = './inp_files/index.ndx'          # Entire path to Index file - Do not use $HOME or the likes
 itp_file                  = './inp_files/posre.itp'           # Entire path to ITP file - Do not use $HOME or the likes
-restr_file                = './inp_files/helix.gro'           # Entire path to Restraint file - Do not use $HOME or the likes
+restr_file                = './inp_files/helix.gro'           # Entire path to initial structure from which we will start the position restraints simulations
 eminrestr_md              = './inp_files/grompp_after_coco-em1.mdp'
 eeqrestr_md               = './inp_files/grompp_after_coco-em2.mdp'
 
