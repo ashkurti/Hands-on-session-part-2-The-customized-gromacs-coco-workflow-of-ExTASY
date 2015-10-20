@@ -27,7 +27,7 @@ All iterations from the 2nd onwards would include one C-like step and one D-like
 * Iteration 3 - Step C & Step D
 * Iteration 4 - Step C & Step D
 
-### How do I get set up? ###
+### How do I get the workflow to run? ###
 
 To run this workflow in their own systems the user should do the following:
 ```
