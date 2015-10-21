@@ -6,7 +6,7 @@ This repository, stores the input files necessary to execute the gromacs/coco wo
 
 The resource configuration file stampede.rcfg and archer.rcfg should be modified by the user, with their credentials on the username UNAME and allocation (project to be charged for the computations on the HPC resource).
 
-In addition the users would ideally use their own simulation files, for computation contexts similar to this one and complete the information on their names in workload configuration file such as gmxcoco.wcfg.
+In addition the users would ideally use their own simulation files, for computation contexts similar to this one and complete the information on their file names in a workload configuration file such as gmxcoco.wcfg.
 
 A- In this case, we will perform a set of Molecular Dynamics (MD) simulations (the user decides the size of the set throught the num_CUs parameter of the gmxcoco.wcfg configuration file) with gromacs, starting from an initial structure ./inp_files/helix.gro with simulation parameters and topology described at respectively ./inp_files/grompp-verlet.mdp and ./inp_files/topol.top
 
