@@ -75,7 +75,7 @@ and at last, after completing stampede.rcfg and gmxcoco.wcfg appropriately:
 ```
 #!python
 
-python extasy_gmxcoco.py --RPconfig stampede.rcfg --Kconfig gmxcoco.wcfg | & tee extasy.log
+python extasy_gmxcoco.py --RPconfig stampede.rcfg --Kconfig gmxcoco.wcfg
 
 ```
 
