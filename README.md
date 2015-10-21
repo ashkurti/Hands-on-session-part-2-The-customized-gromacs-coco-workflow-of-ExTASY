@@ -29,7 +29,7 @@ All iterations from the 2nd onwards would include one C-like step and one D-like
 
 ### How do I get the workflow to run? ###
 
-To run this workflow in their own systems the user should do the following:
+To run this workflow in their own systems the users should do the following:
 ```
 #!python
 
