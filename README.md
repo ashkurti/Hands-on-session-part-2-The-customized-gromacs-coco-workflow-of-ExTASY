@@ -29,45 +29,19 @@ All iterations from the 2nd onwards would include one C-like step and one D-like
 
 ### How do I get the workflow to run? ###
 
-To run this workflow in their own systems the users should do the following:
+To run this workflow in the workflow machine the users should do the following:
 ```
 #!python
 
-wget https://bitbucket.org/extasy-project/extasy_gmxcoco/get/ext_gmxcoco-0.5.tar.gz
-mkdir -p extasy_gmxcoco ; tar -xvf ext_gmxcoco-0.5.tar.gz -C extasy_gmxcoco
-cd extasy_gmxcoco
-virtualenv $HOME/ExTASY_0.2
-source $HOME/ExTASY_0.2/bin/activate.cs
-```
-If in a C shell:
-```
-#!python
+wget https://bitbucket.org/extasy-project/hands-on-session-part-2-the-customized-gromacs-coco-workflow/get/ext_gmxcoco-0.6.tar.gz
+tar -xvf ext_gmxcoco-0.6.tar.gz
+cd extasy-project-hands-on-session-part-2-the-customized-gromacs-coco-workflow-9a8fbebe90fc/
 
-setenv ENMD_INSTALL_VERSION "master"
-```
-or if in a bash shell:
-```
-#!python
-
-export ENMD_INSTALL_VERSION="master"
-```
-Afterwards continue with:
-```
-#!python
-pip install --upgrade git+https://github.com/radical-cybertools/radical.ensemblemd.git@$ENMD_INSTALL_VERSION#egg=radical.ensemblemd
-```
-if in a C shell:
-
-```
-#!python
-
-setenv RADICAL_ENMD_VERBOSE REPORT
-
-```
-or if in a bash shell:
-```
-#!python
-
+ssh username@workflow.iu.xsede.org
+source /opt/tutorials/radical-tutorial/rp-tut.sh
+virtualenv --system-site-packages $HOME/ve
+source $HOME/ve/bin/activate
+pip install radical.ensemblemd
 export RADICAL_ENMD_VERBOSE=REPORT
 
 ```
