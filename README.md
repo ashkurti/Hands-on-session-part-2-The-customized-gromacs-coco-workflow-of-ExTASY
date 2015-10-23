@@ -1,7 +1,5 @@
 # README #
 
-### What is this repository for? ###
-
 This repository, stores the input files necessary to execute the gromacs/coco workflow for a penta-alanine example in a High Performance Computing (HPC) environment such as STAMPEDE (XSEDE, US supercomputing resources) or ARCHER (UK supercomputing resources).
 
 The resource configuration file stampede.rcfg and archer.rcfg should be modified by the user, with their credentials on the username UNAME and allocation (project to be charged for the computations on the HPC resource).
@@ -35,9 +33,9 @@ To run this workflow in the workflow machine the users should do the following:
 
 ssh username@workflow.iu.xsede.org
 
-wget https://github.com/ashkurti/Hands-on-session-part-2-The-customized-gromacs-coco-workflow-of-ExTASY/archive/1.tar.gz 
-tar -xvf 1.tar.gz
-cd Hands-on-session-part-2-The-customized-gromacs-coco-workflow-of-ExTASY-1
+wget https://github.com/ashkurti/Hands-on-session-part-2-The-customized-gromacs-coco-workflow-of-ExTASY/archive/ext_gmxcoco-0.7.tar.gz  
+tar -xvf ext_gmxcoco-0.7.tar.gz
+cd Hands-on-session-part-2-The-customized-gromacs-coco-workflow-of-ExTASY-ext_gmxcoco-0.7
 
 source /opt/tutorials/radical-tutorial/rp-tut.sh
 virtualenv --system-site-packages $HOME/ve
