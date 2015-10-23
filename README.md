@@ -35,9 +35,9 @@ To run this workflow in the workflow machine the users should do the following:
 
 ssh username@workflow.iu.xsede.org
 
-wget https://bitbucket.org/extasy-project/hands-on-session-part-2-the-customized-gromacs-coco-workflow/get/ext_gmxcoco-0.6.tar.gz
-tar -xvf ext_gmxcoco-0.6.tar.gz
-cd extasy-project-hands-on-session-part-2-the-customized-gromacs-coco-workflow-9a8fbebe90fc/
+wget https://github.com/ashkurti/Hands-on-session-part-2-The-customized-gromacs-coco-workflow-of-ExTASY/archive/1.tar.gz 
+tar -xvf 1.tar.gz
+cd Hands-on-session-part-2-The-customized-gromacs-coco-workflow-of-ExTASY-1
 
 source /opt/tutorials/radical-tutorial/rp-tut.sh
 virtualenv --system-site-packages $HOME/ve
