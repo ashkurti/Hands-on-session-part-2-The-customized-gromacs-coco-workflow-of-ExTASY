@@ -33,11 +33,12 @@ To run this workflow in the workflow machine the users should do the following:
 ```
 #!python
 
+ssh username@workflow.iu.xsede.org
+
 wget https://bitbucket.org/extasy-project/hands-on-session-part-2-the-customized-gromacs-coco-workflow/get/ext_gmxcoco-0.6.tar.gz
 tar -xvf ext_gmxcoco-0.6.tar.gz
 cd extasy-project-hands-on-session-part-2-the-customized-gromacs-coco-workflow-9a8fbebe90fc/
 
-ssh username@workflow.iu.xsede.org
 source /opt/tutorials/radical-tutorial/rp-tut.sh
 virtualenv --system-site-packages $HOME/ve
 source $HOME/ve/bin/activate
